@@ -68,7 +68,6 @@
 
 pub fn solve() -> crate::Result<()> {
     let input = crate::read_input("day02.txt")?;
-
     println!("Day02 part1: {}", part1(&input));
     println!("Day02 part2: {}", part2(&input));
     Ok(())
@@ -106,8 +105,6 @@ fn part2(input: &str) -> String {
         });
 
         if let Some(other) = other {
-            println!("{}", other);
-            println!("{}", id);
             return other
                 .chars()
                 .zip(id.chars())

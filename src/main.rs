@@ -14,12 +14,18 @@ pub fn read_input(input_file: &str) -> Result<String> {
 }
 
 fn main() -> Result<()> {
+    let days = &[day01::solve, day02::solve];
+
     match std::env::args().nth(1).map(|s| s.parse::<usize>()) {
-        Some(Ok(1)) => day01::solve()?,
-        Some(Ok(2)) => day02::solve()?,
+        Some(Ok(0)) => println!("There's day 0"),
+        Some(Ok(n)) if n <= days.len() => days[n - 1]()?,
         Some(Ok(n)) => println!("Day {} is not implemented yet.", n),
         Some(Err(err)) => println!("Invalid day argument: {}.", err),
-        None => println!("Day argument must be provided."),
+        None => {
+            for day in days {
+                day()?;
+            }
+        }
     }
 
     Ok(())
