@@ -55,10 +55,22 @@
 //!
 //! If the Elves all proceed with their own plans, none of them will have enough fabric.
 //! How many square inches of fabric are within two or more claims?
+//!
+//!
+//! --- Part Two ---
+//!
+//! Amidst the chaos, you notice that exactly one claim doesn't overlap by even a
+//! single square inch of fabric with any other claim. If you can somehow draw
+//! attention to it, maybe the Elves will be able to make Santa's suit after all!
+//!
+//! For example, in the claims above, only claim 3 is intact after all claims are made.
+//!
+//! What is the ID of the only claim that doesn't overlap?
 
 pub fn solve() -> crate::Result<()> {
     let input = crate::read_input("day03.txt")?;
     println!("Day03 part1: {}", part1(&input));
+    println!("Day03 part2: {}", part2(&input));
     Ok(())
 }
 
@@ -77,6 +89,21 @@ fn part1(input: &str) -> usize {
 
     tiles.iter().filter(|&&count| 1 < count).count()
 }
+// 149 totals
+fn part2(input: &str) -> usize {
+    let fabrics: Vec<_> = parse(input).into_iter().collect();
+
+    fabrics
+        .iter()
+        .find(|&fab| {
+            fabrics
+                .iter()
+                .filter(|&f2| fab.id != f2.id)
+                .all(|f2| !fab.overlaps(f2))
+        })
+        .expect("All claims overlap")
+        .id
+}
 
 fn parse<'a>(input: &'a str) -> impl IntoIterator<Item = Fabric> + Clone + 'a {
     input
@@ -86,32 +113,51 @@ fn parse<'a>(input: &'a str) -> impl IntoIterator<Item = Fabric> + Clone + 'a {
 }
 
 #[derive(parse_display::FromStr)]
-#[display("#{_id} @ {x},{y}: {w}x{h}")]
+#[display("#{id} @ {x},{y}: {w}x{h}")]
 struct Fabric {
-    _id: usize,
+    id: usize,
     x: usize,
     y: usize,
     w: usize,
     h: usize,
 }
 
+impl Fabric {
+    fn overlaps(&self, other: &Self) -> bool {
+        !(self.x + self.w <= other.x
+            || other.x + other.w <= self.x
+            || self.y + self.h <= other.y
+            || other.y + other.h <= self.y)
+    }
+}
+
 #[cfg(test)]
 mod tests {
 
-    #[test]
-    fn part1_example() {
-        let input = r#"
+    static INPUT: &str = r#"
 #1 @ 1,3: 4x4
 #2 @ 3,1: 4x4
-#3 @ 5,5: 2x2"#
-            .trim();
+#3 @ 5,5: 2x2"#;
 
-        assert_eq!(super::part1(input), 4);
+    #[test]
+    fn part1_example() {
+        assert_eq!(super::part1(INPUT.trim()), 4);
     }
 
     #[test]
     fn part1() {
         let input = crate::read_input("day03.txt").expect("Reading input");
         assert_eq!(super::part1(&input), 101469);
+    }
+
+    #[test]
+    fn part2_example() {
+        assert_eq!(super::part2(INPUT.trim()), 3);
+    }
+
+    #[test]
+    fn part2() {
+        let input = crate::read_input("day03.txt").expect("Reading input");
+        assert_eq!(super::part2(input.trim()), 1067);
     }
 }
