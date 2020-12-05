@@ -3,6 +3,7 @@ use std::{fs::File, io::Read};
 mod day01;
 mod day02;
 mod day03;
+mod day04;
 
 pub type Error = Box<dyn std::error::Error + 'static>;
 pub type Result<T> = std::result::Result<T, Error>;
@@ -15,7 +16,7 @@ pub fn read_input(input_file: &str) -> Result<String> {
 }
 
 fn main() -> Result<()> {
-    let days = &[day01::solve, day02::solve, day03::solve];
+    let days = &[day01::solve, day02::solve, day03::solve, day04::solve];
 
     match std::env::args().nth(1).map(|s| s.parse::<usize>()) {
         Some(Ok(0)) => println!("There's day 0"),
